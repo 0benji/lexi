@@ -3,7 +3,7 @@ import {AppBar, Box, Icon, IconButton, Paper, Toolbar, Typography} from '@materi
 import {makeStyles} from '@material-ui/core/styles';
 import WordsTable, {TableWord} from './WordsTable';
 import FiltersInput from './FiltersInput';
-import {ApiWord, Filter, filterQueries, phonemeMap, posCodes} from '../constants/types';
+import {ApiWord, Filter, getFilterInfo, phonemeMap, posCodes} from '../constants/types';
 import {SettingsDialog} from './Settings';
 
 const useStyles = makeStyles((theme) => ({
@@ -64,7 +64,7 @@ export default function Home(): JSX.Element {
     const query =
       API_ROOT +
       filters
-        .map((filter) => `${filterQueries.get(filter.type)}=${filter.query}`)
+        .map((filter) => `${getFilterInfo(filter.type)?.query}=${filter.query}`)
         .concat(['max=1000'])
         .concat(['md=dr'])
         .concat(['ipa=1'])

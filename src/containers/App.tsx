@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import React, {useState} from 'react';
 import Home from '../components/Home';
 
 export type Config = {
@@ -16,6 +17,19 @@ export const ConfigContext = React.createContext<{config: Config, setConfig: (co
 
 export default function App() {
 
+  const theme = createMuiTheme({
+    palette: {
+      primary: {
+        main: "#3f51b5",
+      },
+      contrastThreshold: 3,
+      // Used by the functions below to shift a color's luminance by approximately
+      // two indexes within its tonal palette.
+      // E.g., shift from Red 500 to Red 300 or Red 700.
+      tonalOffset: 0.2,
+    },
+  });
+
   const [state, setStateUnsaved] = useState<Config>( defaultConfig );
 
   const setConfig = (config: Config) => {
@@ -23,7 +37,10 @@ export default function App() {
   }
 
   return <ConfigContext.Provider value={{ config: state, setConfig }}>
-    <Home/>
+    <ThemeProvider theme={theme}>
+      <Home/>
+
+    </ThemeProvider>
   </ConfigContext.Provider>;
 
 }
