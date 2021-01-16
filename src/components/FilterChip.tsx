@@ -191,7 +191,7 @@ export function ExampleChip({type}: { type: FilterType }) {
             variant={'outlined'}
             className={[classes.chip, classes.exampleChip].join(' ')}
             icon={chipType.icon}
-            label={<span>{chipType.text}</span>}
+            label={<span>[{chipType.code}] {chipType.text}</span>}
             color="secondary"
         />
     );
