@@ -50,11 +50,11 @@ export default function Home(): JSX.Element {
                 horizontal: "center",
             }
         })
-        focusInput();
+        // focusInput();
     }
 
     // const inputRef = useRef<HTMLElement>(null);
-    const [focusInput, setFocusInput] = useState<(() => void)>(() => {});
+    // const [focusInput, setFocusInput] = useState<(() => void)>(() => {});
     const [filters, setFilters] = useState<Array<Filter>>(fromHash(window.location.hash));
     const [words, setWords] = useState<Array<TableWord> | undefined>(undefined);
 
@@ -85,6 +85,7 @@ export default function Home(): JSX.Element {
     };
 
     const onFiltersChanged = () => {
+        window.location.hash = getLinkHash();
         if (!filters.length) {
             setWords(undefined);
             return;
@@ -103,7 +104,6 @@ export default function Home(): JSX.Element {
             .then((res) => res.json())
             .then(processWords)
             .catch(console.error);
-        window.location.hash = getLinkHash();
     };
     useEffect(onFiltersChanged, [filters]);
 
@@ -113,11 +113,11 @@ export default function Home(): JSX.Element {
     const [helpOpen, setHelpOpen] = useState(false);
     const toggleHelp = () => setHelpOpen(!helpOpen);
 
-    useEffect(() => {
-        if(settingsOpen || helpOpen || !focusInput)
-            return;
-        focusInput();
-    }, [settingsOpen, helpOpen]);
+    // useEffect(() => {
+    //     if(settingsOpen || helpOpen || !focusInput)
+    //         return;
+    //     focusInput();
+    // }, [settingsOpen, helpOpen]);
 
     return (
         <Box height="100%" className={classes.container}>
@@ -153,7 +153,7 @@ export default function Home(): JSX.Element {
                     </IconButton>
                 </Toolbar>
                 <Box p={2} paddingTop={0}>
-                    <FiltersInput setFilters={setFilters} showHelp={helpOpen} filters={filters} setFocus={setFocusInput}/>
+                    <FiltersInput setFilters={setFilters} showHelp={helpOpen} filters={filters}/>
                 </Box>
             </AppBar>
             <SettingsDialog open={settingsOpen} onClose={toggleSettings}/>

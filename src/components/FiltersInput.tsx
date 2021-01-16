@@ -23,7 +23,7 @@ export default function FiltersInput(props: {
   filters: Array<Filter>,
   setFilters: (filters: Array<Filter>) => void,
   // setFocusInput: (focusInput: () => void) => void,
-  setFocus: (focus: (() => void)) => void,
+  // setFocus: (focus: (() => void)) => void,
   // setInputRef: (inputRef: React.RefObject<HTMLElement>) => void,
 }): JSX.Element {
   const classes = useStyles();
@@ -55,7 +55,7 @@ export default function FiltersInput(props: {
         <InputChip
           onAddFilter={addFilter}
           onDeletePrevious={() => deleteFilter(props.filters.length - 1)}
-          setFocus={props.setFocus}
+          // setFocus={props.setFocus}
         />
       </Box>
       <Collapse in={props.showHelp}>

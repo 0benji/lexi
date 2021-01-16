@@ -48,9 +48,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function InputChip(props: {
     onAddFilter: (filter: Filter) => void,
-    setFocus: (focus: (() => void)) => void,
     onDeletePrevious: () => void,
-    // setFocusInput: (focusInput: () => void) => void,
 }): JSX.Element {
     const classes = useStyles();
     const typeInput = useRef<HTMLElement>(null);
@@ -58,13 +56,13 @@ export function InputChip(props: {
 
     const [type, setType] = useState<FilterType | undefined>(undefined);
     const clear = () => {
-        setType(undefined);
         if (queryInput.current && typeInput.current) {
             queryInput.current.innerText = '';
             typeInput.current.innerText = '';
             typeInput.current.focus();
             queryInput.current.classList.add(classes.hidden);
         }
+        setType(undefined);
     };
 
     const onTypeInput = (event: React.FormEvent<HTMLElement>) => {
@@ -75,13 +73,12 @@ export function InputChip(props: {
             return event.currentTarget.classList.add(classes.error);
 
         event.currentTarget.classList.remove(classes.error);
-        setType(maybeNewType.type);
         event.currentTarget.innerText = maybeNewType.text;
         queryInput.current!.classList.remove(classes.hidden);
-        // if (queryInput.current) {
-            // queryInput.current.focus();
-        // }
-        doFocus();
+        if (queryInput.current) {
+            queryInput.current.focus();
+        }
+        setType(maybeNewType.type);
     };
 
     const onTypeInputKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -110,10 +107,15 @@ export function InputChip(props: {
         }
     };
 
-    const doFocus = () =>
-        type ? queryInput.current && queryInput.current.focus() : typeInput.current && typeInput.current.focus();
+    const doFocus = () => {
+        if(type !== undefined) {
+            queryInput!.current && queryInput.current.focus();
+        } else {
+            typeInput!.current && typeInput.current.focus();
+        }
+    }
+    // useEffect(doFocus, [type])
 
-    props.setFocus(doFocus);
     // props.setFocusInput(doFocus);
     window.addEventListener("load", doFocus);
 
