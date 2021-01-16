@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
         cursor: 'pointer'
     },
     exampleChip: {
+        fontSize: 14,
         color: theme.palette.secondary.main,
     },
     filterName: {
