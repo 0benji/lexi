@@ -1,9 +1,9 @@
-import { Box, Collapse, Paper } from '@material-ui/core';
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import FilterChip, { InputChip } from './FilterChip';
-import { Filter } from '../constants/types';
-import { HelpCard } from './Help';
+import {Box, Collapse, Paper} from '@material-ui/core';
+import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
+import FilterChip, {InputChip} from './FilterChip';
+import {Filter} from '../constants/types';
+import {HelpCard} from './Help';
 
 const useStyles = makeStyles((theme) => ({
   queries: {
@@ -18,31 +18,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function FiltersInput(props: {
-  onFiltersChanged: (filters: Array<Filter>) => void,
-  showHelp: boolean
+  // onFiltersChanged: (filters: Array<Filter>) => void,
+  showHelp: boolean,
+  filters: Array<Filter>,
+  setFilters: (filters: Array<Filter>) => void,
+  // setFocusInput: (focusInput: () => void) => void,
+  setFocus: (focus: (() => void)) => void,
+  // setInputRef: (inputRef: React.RefObject<HTMLElement>) => void,
 }): JSX.Element {
   const classes = useStyles();
-  const [filters, setFilters] = useState<Array<Filter>>([]);
 
   const deleteFilter = (index: number) => {
-    const newFilters = filters.filter((_, i) => i !== index);
-    setFilters(newFilters);
-    props.onFiltersChanged(newFilters);
+    const newFilters = props.filters.filter((_, i) => i !== index);
+    props.setFilters(newFilters);
   };
+
 
   const addFilter = (filter: Filter): void => {
     const newFilters = [
-      ...filters.filter((f) => f.type !== filter.type),
+      ...props.filters.filter((f) => f.type !== filter.type),
       filter
     ];
-    setFilters(newFilters);
-    props.onFiltersChanged(newFilters);
+    props.setFilters(newFilters);
   };
 
   return (
     <Paper variant="outlined" className={classes.queries}>
       <Box>
-        {filters.map((filter, index) => (
+        {props.filters.map((filter, index) => (
           <FilterChip
             key={filter.type}
             filter={filter}
@@ -51,7 +54,8 @@ export default function FiltersInput(props: {
         ))}
         <InputChip
           onAddFilter={addFilter}
-          onDeletePrevious={() => deleteFilter(filters.length - 1)}
+          onDeletePrevious={() => deleteFilter(props.filters.length - 1)}
+          setFocus={props.setFocus}
         />
       </Box>
       <Collapse in={props.showHelp}>

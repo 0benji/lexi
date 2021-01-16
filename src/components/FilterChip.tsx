@@ -47,17 +47,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function InputChip(props: {
-    onAddFilter: (filter: Filter) => void;
-    onDeletePrevious: () => void;
+    onAddFilter: (filter: Filter) => void,
+    setFocus: (focus: (() => void)) => void,
+    onDeletePrevious: () => void,
+    // setFocusInput: (focusInput: () => void) => void,
 }): JSX.Element {
     const classes = useStyles();
     const typeInput = useRef<HTMLElement>(null);
     const queryInput = useRef<HTMLElement>(null);
 
-    const [newType, setNewType] = useState<FilterType | undefined>(undefined);
-
+    const [type, setType] = useState<FilterType | undefined>(undefined);
     const clear = () => {
-        setNewType(undefined);
+        setType(undefined);
         if (queryInput.current && typeInput.current) {
             queryInput.current.innerText = '';
             typeInput.current.innerText = '';
@@ -67,24 +68,20 @@ export function InputChip(props: {
     };
 
     const onTypeInput = (event: React.FormEvent<HTMLElement>) => {
-        if (event.currentTarget.innerHTML.includes('&nbsp;')) {
-            const maybeNewType = getFilterForCode(
-                event.currentTarget.innerText.trimEnd()
-            );
-            if (maybeNewType !== undefined) {
-                setNewType(maybeNewType.type);
-                event.currentTarget.innerText = maybeNewType.text;
-                if (queryInput.current) {
-                    queryInput.current.classList.remove(classes.hidden);
-                    queryInput.current.focus();
-                }
-            } else {
-                event.currentTarget.classList.add(classes.error);
-            }
-        } else {
+        if (!event.currentTarget.innerHTML.includes('&nbsp;'))
+            return;
+        const maybeNewType = getFilterForCode(event.currentTarget.innerText.trimEnd());
+        if (!maybeNewType)
+            return event.currentTarget.classList.add(classes.error);
 
-            event.currentTarget.classList.remove(classes.error);
-        }
+        event.currentTarget.classList.remove(classes.error);
+        setType(maybeNewType.type);
+        event.currentTarget.innerText = maybeNewType.text;
+        queryInput.current!.classList.remove(classes.hidden);
+        // if (queryInput.current) {
+            // queryInput.current.focus();
+        // }
+        doFocus();
     };
 
     const onTypeInputKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -106,7 +103,7 @@ export function InputChip(props: {
     const onQueryInput = (event: React.FormEvent<HTMLElement>) => {
         if (event.currentTarget.innerHTML.includes('&nbsp;')) {
             props.onAddFilter({
-                type: newType as FilterType,
+                type: type as FilterType,
                 query: event.currentTarget.innerText.trimEnd()
             });
             clear();
@@ -114,8 +111,10 @@ export function InputChip(props: {
     };
 
     const doFocus = () =>
-        newType ? queryInput.current && queryInput.current.focus() : typeInput.current && typeInput.current.focus();
+        type ? queryInput.current && queryInput.current.focus() : typeInput.current && typeInput.current.focus();
 
+    props.setFocus(doFocus);
+    // props.setFocusInput(doFocus);
     window.addEventListener("load", doFocus);
 
     return (
@@ -123,8 +122,9 @@ export function InputChip(props: {
             tabIndex={-1}
             className={[classes.chip, classes.inputChip].join(' ')}
             icon={
-                newType !== undefined ? getFilterInfo(newType)?.icon : unknownIcon
+                type !== undefined ? getFilterInfo(type)?.icon : unknownIcon
             }
+            clickable={false}
             onClick={doFocus}
             label={
                 <span>
@@ -188,11 +188,7 @@ export function ExampleChip({type}: { type: FilterType }) {
             variant={'outlined'}
             className={[classes.chip, classes.exampleChip].join(' ')}
             icon={chipType.icon}
-            label={
-                <span>
-                    [{chipType.code}] {chipType.text} ...
-        </span>
-            }
+            label={<span>{chipType.text}</span>}
             color="secondary"
         />
     );

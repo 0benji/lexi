@@ -19,7 +19,7 @@ export function HelpCard() {
     <Paper className={classes.helpCard} variant={'outlined'}>
       {
           // @ts-ignore
-        Object.keys(FilterType).map(k => <ExampleChip type={FilterType[k]}/>)
+        Object.keys(FilterType).map(k => <ExampleChip key={k} type={FilterType[k]}/>)
       }
     </Paper>
   );
