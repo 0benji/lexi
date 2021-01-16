@@ -34,11 +34,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function EmptyState(classes: Record<"ipa" | "pronunciation" | "partOfSpeech" | "unknown" | "emptyIcon", string>) {
+function EmptyState(classes: Record<"ipa" | "pronunciation" | "partOfSpeech" | "unknown" | "emptyIcon", string>, zeroResults: boolean) {
   return (
     <Box style={{ textAlign: 'center', color: '#ddd' }} alignSelf={'center'} >
-      <Icon className={classes.emptyIcon}>translate</Icon>
-      <Typography variant={'h5'}>Add a filter to see results</Typography>
+      <Icon className={classes.emptyIcon}>{ zeroResults ? "sentiment_dissatisfied" : "translate"}</Icon>
+      <Typography variant={'h5'}>{ zeroResults ? "No results" : "Add a filter to see results"}</Typography>
     </Box>
   );
 }
@@ -57,7 +57,11 @@ export default function WordsTable({ words }: { words: Array<TableWord> | undefi
 
   const { config } = useContext(ConfigContext);
 
-  return words !== undefined ? (
+  if(words === undefined)
+    return EmptyState(classes, false);
+  else if(words.length == 0)
+    return EmptyState(classes, true);
+  return (
     <Table>
       <TableHead>
         <TableRow>
@@ -87,5 +91,5 @@ export default function WordsTable({ words }: { words: Array<TableWord> | undefi
         ))}
       </TableBody>
     </Table>
-  ) : EmptyState(classes);
+  );
 }
